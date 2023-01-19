@@ -7,9 +7,9 @@ import (
 	"strconv"
 )
 
-func (app *application) home(w http.ResponseWriter, r *http.Request) {
+func (a *application) home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		app.notFound(w)
+		a.notFound(w)
 		return
 	}
 
@@ -21,33 +21,33 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
-		app.errorLog.Println(err.Error())
-		app.serverError(w, err)
+		a.errorLog.Println(err.Error())
+		a.serverError(w, err)
 		return
 	}
 
 	err = ts.Execute(w, nil)
 	if err != nil {
-		app.errorLog.Println(err.Error())
-		app.serverError(w, err)
+		a.errorLog.Println(err.Error())
+		a.serverError(w, err)
 	}
 
 }
 
-func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
+func (a *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil || id < 1 {
-		app.notFound(w)
+		a.notFound(w)
 		return
 	}
 
 	fmt.Fprintf(w, "Display a specific snippet with ID %d...", id)
 }
 
-func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
+func (a *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		w.Header().Set("Allow", "POST")
-		app.clientError(w, http.StatusMethodNotAllowed)
+		a.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
 
