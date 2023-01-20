@@ -4,14 +4,16 @@ import (
 	"database/sql"
 	"flag"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/mailtomainak/snippetbox/pkg/models/mysql"
 	"log"
 	"net/http"
 	"os"
 )
 
 type application struct {
-	errorLog *log.Logger
-	infoLog  *log.Logger
+	errorLog     *log.Logger
+	infoLog      *log.Logger
+	snippetModel *mysql.SnippetModel
 }
 
 func main() {
@@ -22,13 +24,16 @@ func main() {
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.LUTC)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.LUTC|log.Lshortfile)
+
 	db, err := openDB(*dsn)
 	if err != nil {
 		errorLog.Println(err)
 	}
 	defer db.Close()
-
-	app := &application{infoLog, errorLog}
+	snippetModel := &mysql.SnippetModel{
+		DB: db,
+	}
+	app := &application{infoLog, errorLog, snippetModel}
 
 	infoLog.Printf("Starting server on %s", *addr)
 

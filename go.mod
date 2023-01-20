@@ -1,4 +1,4 @@
-module github.com/rsplio/snippetbox
+module github.com/mailtomainak/snippetbox
 
 go 1.18
 
