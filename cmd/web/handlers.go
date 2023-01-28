@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/mailtomainak/snippetbox/pkg/models"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -41,7 +42,16 @@ func (a *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "Display a specific snippet with ID %d...", id)
+	var s *models.Snippet
+	if s, err = a.snippetModel.Get(id); err != nil {
+		if err == models.ErrNoRecord {
+			a.notFound(w)
+			return
+		}
+		a.serverError(w, err)
+		return
+	}
+	fmt.Fprintf(w, "id = %d, content =%s , title=%s", s.ID, s.Title, s.Content)
 }
 
 func (a *application) createSnippet(w http.ResponseWriter, r *http.Request) {

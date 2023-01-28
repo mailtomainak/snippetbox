@@ -27,7 +27,16 @@ func (m *SnippetModel) Insert(title, content, expires string) (int, error) {
 
 // Get a snippet
 func (m *SnippetModel) Get(snippetId int) (*models.Snippet, error) {
-	return nil, nil
+	var snippet = &models.Snippet{}
+	stmt := `SELECT id,content,title,created,expires FROM snippets where id=?`
+	if err := m.DB.QueryRow(stmt, snippetId).Scan(&snippet.ID, &snippet.Title, &snippet.Content, &snippet.Created,
+		&snippet.Expires); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, models.ErrNoRecord
+		}
+		return nil, err
+	}
+	return snippet, nil
 }
 
 // Get the 10  latest created snippets
