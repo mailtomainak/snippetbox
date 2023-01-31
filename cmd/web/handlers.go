@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/mailtomainak/snippetbox/pkg/models"
-	"html/template"
 	"net/http"
 	"strconv"
 )
@@ -14,7 +13,15 @@ func (a *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files := []string{
+	snippets, err := a.snippetModel.Latest()
+	if err != nil {
+		a.serverError(w, err)
+	}
+
+	for _, snippet := range snippets {
+		fmt.Fprintf(w, "%v\n", snippet)
+	}
+	/*files := []string{
 		"./ui/html/home.page.tmpl",
 		"./ui/html/base.layout.tmpl",
 		"./ui/html/footer.partial.tmpl",
@@ -32,6 +39,7 @@ func (a *application) home(w http.ResponseWriter, r *http.Request) {
 		a.errorLog.Println(err.Error())
 		a.serverError(w, err)
 	}
+	*/
 
 }
 
