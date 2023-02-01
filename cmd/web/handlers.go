@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/mailtomainak/snippetbox/pkg/models"
+	"html/template"
 	"net/http"
 	"strconv"
 )
@@ -59,7 +60,21 @@ func (a *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		a.serverError(w, err)
 		return
 	}
-	fmt.Fprintf(w, "id = %d, content =%s , title=%s", s.ID, s.Title, s.Content)
+	files := []string{
+		"./ui/html/show.page.tmpl",
+		"./ui/html/base.layout.tmpl",
+		"./ui/html/footer.partial.tmpl",
+	}
+
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		a.serverError(w, err)
+		return
+	}
+	err = ts.Execute(w, s)
+	if err != nil {
+		a.serverError(w, err)
+	}
 }
 
 func (a *application) createSnippet(w http.ResponseWriter, r *http.Request) {
