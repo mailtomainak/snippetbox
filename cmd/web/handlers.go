@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/mailtomainak/snippetbox/pkg/models"
-	"html/template"
 	"net/http"
 	"strconv"
 )
@@ -19,25 +18,7 @@ func (a *application) home(w http.ResponseWriter, r *http.Request) {
 		a.serverError(w, err)
 	}
 
-	data := &templateData{Snippets: snippets}
-	files := []string{
-		"./ui/html/home.page.tmpl",
-		"./ui/html/base.layout.tmpl",
-		"./ui/html/footer.partial.tmpl",
-	}
-
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		a.errorLog.Println(err.Error())
-		a.serverError(w, err)
-		return
-	}
-
-	err = ts.Execute(w, data)
-	if err != nil {
-		a.errorLog.Println(err.Error())
-		a.serverError(w, err)
-	}
+	a.render(w, r, "home.page.tmpl", &templateData{Snippets: snippets})
 
 }
 
@@ -57,23 +38,7 @@ func (a *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		a.serverError(w, err)
 		return
 	}
-	files := []string{
-		"./ui/html/show.page.tmpl",
-		"./ui/html/base.layout.tmpl",
-		"./ui/html/footer.partial.tmpl",
-	}
-
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		a.serverError(w, err)
-		return
-	}
-	err = ts.Execute(w, &templateData{
-		Snippet: s,
-	})
-	if err != nil {
-		a.serverError(w, err)
-	}
+	a.render(w, r, "show.page.tmpl", &templateData{Snippet: s})
 }
 
 func (a *application) createSnippet(w http.ResponseWriter, r *http.Request) {
