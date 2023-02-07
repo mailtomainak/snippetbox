@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"runtime/debug"
+	"time"
 )
 
 func (a *application) serverError(w http.ResponseWriter, err error) {
@@ -22,6 +23,14 @@ func (a *application) notFound(w http.ResponseWriter) {
 	a.clientError(w, http.StatusNotFound)
 }
 
+func (a *application) addCurrentYear(td *templateData) *templateData {
+	if td == nil {
+		td = &templateData{}
+	}
+	td.CurrentYear = time.Now().Year()
+	return td
+}
+
 func (a *application) render(w http.ResponseWriter, r *http.Request, name string, td *templateData) {
 	ts, ok := a.templateCache[name]
 	if !ok {
@@ -30,7 +39,7 @@ func (a *application) render(w http.ResponseWriter, r *http.Request, name string
 	}
 
 	buf := new(bytes.Buffer)
-	err := ts.Execute(buf, td)
+	err := ts.Execute(buf, a.addCurrentYear(td))
 	if err != nil {
 		a.serverError(w, err)
 		return
