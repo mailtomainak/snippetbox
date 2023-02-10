@@ -39,7 +39,7 @@ func main() {
 	if err != nil {
 		errorLog.Fatal(err)
 	}
-	app := &application{infoLog, errorLog, snippetModel, templateCache}
+	app := &application{errorLog, infoLog, snippetModel, templateCache}
 
 	infoLog.Printf("Starting server on %s", *addr)
 
