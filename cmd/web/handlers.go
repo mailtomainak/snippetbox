@@ -8,11 +8,6 @@ import (
 )
 
 func (a *application) home(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		a.notFound(w)
-		return
-	}
-
 	snippets, err := a.snippetModel.Latest()
 	if err != nil {
 		a.serverError(w, err)
@@ -23,7 +18,7 @@ func (a *application) home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *application) showSnippet(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
 	if err != nil || id < 1 {
 		a.notFound(w)
 		return
@@ -42,12 +37,6 @@ func (a *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *application) createSnippet(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		w.Header().Set("Allow", "POST")
-		a.clientError(w, http.StatusMethodNotAllowed)
-		return
-	}
-
 	title := "0 snail"
 	content := "O snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n– Kobayashi Issa"
 	expires := "7"
@@ -59,4 +48,8 @@ func (a *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	http.Redirect(w, r, fmt.Sprintf("/snippet?id=%d", id), http.StatusSeeOther)
+}
+
+func (a *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Create a new snippet..."))
 }
