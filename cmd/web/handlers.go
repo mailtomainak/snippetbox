@@ -79,7 +79,10 @@ func (a *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(errors) > 0 {
-		fmt.Fprint(w, errors)
+		a.render(w, r, "create.page.tmpl", &templateData{
+			FormErrors: errors,
+			FormData:   r.PostForm,
+		})
 		return
 	}
 
