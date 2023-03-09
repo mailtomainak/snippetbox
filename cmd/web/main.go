@@ -48,7 +48,12 @@ func main() {
 	sessionManager.Store = mysqlstore.New(db)
 	sessionManager.Lifetime = 12 * time.Hour
 
-	app := &application{errorLog, infoLog, snippetModel, templateCache, sessionManager}
+	app := &application{
+		errorLog,
+		infoLog,
+		snippetModel,
+		templateCache,
+		sessionManager}
 
 	infoLog.Printf("Starting server on %s", *addr)
 
