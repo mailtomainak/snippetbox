@@ -34,7 +34,9 @@ func (a *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		a.serverError(w, err)
 		return
 	}
-	a.render(w, r, "show.page.tmpl", &templateData{Snippet: s})
+	flash := a.sessionManager.PopString(r.Context(), "flash")
+
+	a.render(w, r, "show.page.tmpl", &templateData{Snippet: s, Flash: flash})
 }
 
 func (a *application) createSnippet(w http.ResponseWriter, r *http.Request) {
@@ -58,6 +60,7 @@ func (a *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		a.serverError(w, err)
 		return
 	}
+	a.sessionManager.Put(r.Context(), "flash", "Snippet successfully created!")
 	http.Redirect(w, r, fmt.Sprintf("/snippet/%d", id), http.StatusSeeOther)
 }
 
