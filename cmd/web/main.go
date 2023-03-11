@@ -62,7 +62,7 @@ func main() {
 		ErrorLog: errorLog,
 		Handler:  app.routes(),
 	}
-	err = server.ListenAndServe()
+	err = server.ListenAndServeTLS("./tls/cert.pem", "./tls/key.unencrypted.pem")
 	errorLog.Fatal(err)
 }
 
