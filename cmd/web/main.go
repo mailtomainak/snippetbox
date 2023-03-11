@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"database/sql"
 	"flag"
 	"github.com/alexedwards/scs/mysqlstore"
@@ -57,12 +58,21 @@ func main() {
 
 	infoLog.Printf("Starting server on %s", *addr)
 
-	server := &http.Server{
-		Addr:     *addr,
-		ErrorLog: errorLog,
-		Handler:  app.routes(),
+	tlsConfig := &tls.Config{
+		MaxVersion:       tls.VersionTLS12,
+		MinVersion:       tls.VersionTLS12,
+		CurvePreferences: []tls.CurveID{tls.CurveP256, tls.X25519},
 	}
-	err = server.ListenAndServe()
+	server := &http.Server{
+		Addr:         *addr,
+		ErrorLog:     errorLog,
+		Handler:      app.routes(),
+		TLSConfig:    tlsConfig,
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
+	err = server.ListenAndServeTLS("./tls/cert.pem", "./tls/key.unencrypted.pem")
 	errorLog.Fatal(err)
 }
 

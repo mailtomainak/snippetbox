@@ -34,9 +34,10 @@ func (a *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		a.serverError(w, err)
 		return
 	}
-	flash := a.sessionManager.PopString(r.Context(), "flash")
 
-	a.render(w, r, "show.page.tmpl", &templateData{Snippet: s, Flash: flash})
+	data := a.newTemplateData(r)
+	data.Snippet = s
+	a.render(w, r, "show.page.tmpl", data)
 }
 
 func (a *application) createSnippet(w http.ResponseWriter, r *http.Request) {

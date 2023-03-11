@@ -23,12 +23,11 @@ func (a *application) notFound(w http.ResponseWriter) {
 	a.clientError(w, http.StatusNotFound)
 }
 
-func (a *application) addCurrentYear(td *templateData) *templateData {
-	if td == nil {
-		td = &templateData{}
+func (a *application) newTemplateData(r *http.Request) *templateData {
+	return &templateData{
+		Flash:       a.sessionManager.PopString(r.Context(), "flash"),
+		CurrentYear: time.Now().Year(),
 	}
-	td.CurrentYear = time.Now().Year()
-	return td
 }
 
 func (a *application) render(w http.ResponseWriter, r *http.Request, name string, td *templateData) {
@@ -39,7 +38,7 @@ func (a *application) render(w http.ResponseWriter, r *http.Request, name string
 	}
 
 	buf := new(bytes.Buffer)
-	err := ts.Execute(buf, a.addCurrentYear(td))
+	err := ts.Execute(buf, td)
 	if err != nil {
 		a.serverError(w, err)
 		return
