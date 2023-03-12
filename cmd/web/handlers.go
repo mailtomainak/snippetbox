@@ -70,3 +70,23 @@ func (a *application) createSnippetForm(w http.ResponseWriter, r *http.Request) 
 		Form: forms.NewForm(nil),
 	})
 }
+
+func (a *application) userSignupPost(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("userSignupPost"))
+}
+
+func (a *application) userSignup(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("userSignup"))
+}
+
+func (a *application) userLoginPost(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("userLoginPost"))
+}
+
+func (a *application) userLogin(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("userLogin"))
+}
+
+func (a *application) userLogoutPost(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("userLogoutPost"))
+}
